@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="row g-0">
+        <div class="col-md-6">
+            <img src="/static/images/({{ image_index }}).jpg" class="img-fluid rounded-start" alt="{{ car.品牌 }} {{ car.车型 }}">
+        </div>
+        <div class="col-md-6">
+            <div class="card-body">
+                <h2 class="card-title">{{ car.品牌 }} {{ car.车型 }}</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th scope="row">价格</th>
+                                <td>{{ car['价格(万元)'] }}万元</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">车身结构</th>
+                                <td>{{ car.车身结构 }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">驱动方式</th>
+                                <td>{{ car.驱动方式 }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">轴距</th>
+                                <td>{{ car['轴距(mm)'] }}mm</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">行李箱容积</th>
+                                <td>{{ car['行李箱容积(L)'] }}L</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">能源类型</th>
+                                <td>{{ car.能源类型 }}</td>
+                            </tr>
+                            {% if car.能源类型 == "电动" %}
+                            <tr>
+                                <th scope="row">续航里程</th>
+                                <td>{{ car['续航里程(km)'] }}km</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <button onclick="goBack()" class="btn btn-primary">返回列表</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function goBack() {
+    // 如果有上一页，则返回上一页
+    if (document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+    } else {
+        // 如果没有上一页，则返回首页
+        window.location.href = '/';
+    }
+}
+</script>
+{% endblock %} 

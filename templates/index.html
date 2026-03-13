@@ -1,0 +1,854 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+/* Welcome Section Styles */
+.welcome-container {
+    margin: -1.5rem -12px 2rem -12px;
+    width: calc(100% + 24px);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-image-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.welcome-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.welcome-text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 移除灰色渐变背景 */
+    padding: 20px;
+    z-index: 10;
+}
+
+.welcome-text-content {
+    color: #333333;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 0 20px;
+}
+
+.welcome-heading {
+    font-size: 4.5rem;
+    letter-spacing: 2px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: #333333;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+    transform: translateY(-80px);
+    opacity: 0;
+}
+
+.welcome-title {
+    color: #ffac38;
+    font-size: 110%;
+    display: block;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}
+
+.welcome-subtitle {
+    margin: 0.5rem 0 1rem;
+    font-size: 2rem;
+    color: #333333;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    transform: translateY(-60px);
+    opacity: 0;
+}
+
+.animated-text {
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-80px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 筛选框样式优化 */
+.filter-section {
+    background: linear-gradient(145deg, #fff, #f8f0e8);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(255, 127, 80, 0.1);
+    border: 1px solid rgba(255, 172, 56, 0.2);
+    transition: all 0.3s ease;
+    position: sticky;
+    top: 90px;
+    max-height: 80vh; /* 限制最大高度 */
+    overflow-y: auto; /* 添加垂直滚动条 */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255, 127, 80, 0.6) rgba(248, 240, 232, 0.3); /* Firefox */
+}
+
+.filter-section:hover {
+    box-shadow: 0 15px 35px rgba(255, 127, 80, 0.15);
+    transform: translateY(-5px);
+}
+
+/* 自定义滚动条样式 - Webkit浏览器 */
+.filter-section::-webkit-scrollbar {
+    width: 5px;
+}
+
+.filter-section::-webkit-scrollbar-track {
+    background: rgba(248, 240, 232, 0.3);
+    border-radius: 10px;
+}
+
+.filter-section::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(255, 127, 80, 0.6), rgba(255, 172, 56, 0.8));
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.filter-section::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(255, 127, 80, 0.8), rgba(255, 172, 56, 1));
+    box-shadow: 0 0 5px rgba(255, 127, 80, 0.5);
+}
+
+/* 滚动条轨道上的按钮 */
+.filter-section::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* 滚动条角落 */
+.filter-section::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* 科技感装饰元素 */
+.filter-section::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 127, 80, 0.7);
+    box-shadow: 0 0 5px rgba(255, 127, 80, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 127, 80, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 127, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 127, 80, 0);
+    }
+}
+
+.filter-section h4 {
+    color: #FF7F50;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(255, 172, 56, 0.3);
+    position: relative;
+    font-size: 1.4rem;
+}
+
+.filter-section h4:after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 2px;
+    background-color: #FF7F50;
+    bottom: -2px;
+    left: 0;
+}
+
+.form-label {
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.form-select, .form-range {
+    border: 1px solid rgba(255, 172, 56, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    transition: all 0.3s;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.form-select:focus, .form-range:focus {
+    border-color: #FF7F50;
+    box-shadow: 0 0 0 0.25rem rgba(255, 127, 80, 0.25);
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23FF7F50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-size: 12px;
+}
+
+.form-range {
+    height: 8px;
+    cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb {
+    background: #FF7F50;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.form-range::-moz-range-thumb {
+    background: #FF7F50;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.range-value-display {
+    color: #FF7F50;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.filter-btn-group {
+    margin-top: 25px;
+}
+
+.btn-primary {
+    background: linear-gradient(145deg, #FF7F50, #ff6b3d);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(255, 127, 80, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 127, 80, 0.4);
+    background: linear-gradient(145deg, #ff6b3d, #FF7F50);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #666;
+    border: 1px solid #ddd;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #f8f9fa;
+    color: #333;
+    border-color: #ccc;
+}
+
+@media (max-width: 1200px) {
+    .welcome-heading {
+        font-size: 4rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .welcome-heading {
+        font-size: 3.5rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-text-overlay {
+        width: 100%;
+        /* 移除背景 */
+    }
+    
+    .welcome-heading {
+        font-size: 3rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1.5rem;
+    }
+    
+    .filter-section {
+        position: static;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .welcome-heading {
+        font-size: 2.5rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1.2rem;
+    }
+}
+
+/* 卡片样式优化 */
+.card {
+    background: #fff;
+    border: 1px solid rgba(255, 172, 56, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(255, 127, 80, 0.15);
+}
+
+.car-image {
+    height: 200px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+}
+
+.card:hover .car-image {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: #333;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.card-text {
+    color: #666;
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+}
+
+.favorite-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #FF7F50;
+    color: #FF7F50;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(255, 127, 80, 0.15);
+}
+
+.favorite-btn:hover {
+    background: #FF7F50;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.btn-danger {
+    background: #FF7F50;
+    color: #fff;
+}
+
+.btn-outline-danger {
+    background: #fff;
+    color: #FF7F50;
+}
+
+/* 按钮样式统一 */
+.btn-primary {
+    background: linear-gradient(145deg, #FF7F50, #ff6b3d);
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(255, 127, 80, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 127, 80, 0.4);
+    background: linear-gradient(145deg, #ff6b3d, #FF7F50);
+}
+</style>
+
+<!-- Welcome Section -->
+<div class="welcome-container">
+    <div class="welcome-image-wrapper">
+        <img src="{{ url_for('static', filename='welcomethanks/img/Car Website – 1@2x.png') }}" alt="" class="welcome-image">
+        <div class="welcome-text-overlay">
+            <div class="welcome-text-content animated-text">
+                <h1 class="welcome-heading">
+                    <span class="welcome-title">欢迎使用</span>
+                    汽车推荐系统
+                </h1>
+                <p class="welcome-subtitle">Go Go Go !  出发咯 ~</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 筛选和车辆展示部分 -->
+<div class="row">
+    <!-- 筛选边栏 -->
+    <div class="col-md-3">
+        <div class="filter-section">
+            <h4>筛选条件</h4>
+            <form id="filterForm">
+                <div class="mb-3">
+                    <label class="form-label">品牌</label>
+                    <select class="form-select" name="brand">
+                        <option value="">全部</option>
+                        {% for brand in brands %}
+                        <option value="{{ brand }}">{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">价格范围（万元）</label>
+                    <div class="row">
+                        <div class="col">
+                            <input type="range" class="form-range" name="min_price" min="0" max="1000" step="1" value="0">
+                            <div class="d-flex justify-content-between">
+                                <span>最低：</span>
+                                <span id="minPriceValue" class="range-value-display">0万</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <input type="range" class="form-range" name="budget" min="0" max="1000" step="1" value="1000">
+                            <div class="d-flex justify-content-between">
+                                <span>最高：</span>
+                                <span id="maxPriceValue" class="range-value-display">1000万</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">车身结构</label>
+                    <select class="form-select" name="body_type">
+                        <option value="">全部</option>
+                        {% for body_type in body_types %}
+                        <option value="{{ body_type }}">{{ body_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">驱动方式</label>
+                    <select class="form-select" name="drive_type">
+                        <option value="">全部</option>
+                        {% for drive_type in drive_types %}
+                        <option value="{{ drive_type }}">{{ drive_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">能源类型</label>
+                    <select class="form-select" name="energy_type">
+                        <option value="">全部</option>
+                        {% for energy_type in energy_types %}
+                        <option value="{{ energy_type }}">{{ energy_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">最小续航里程（km）</label>
+                    <input type="range" class="form-range" name="min_range" min="0" max="1000" step="10" value="0">
+                    <div class="d-flex justify-content-between">
+                        <span>续航：</span>
+                        <span id="minRangeValue" class="range-value-display">0km</span>
+                    </div>
+                </div>
+
+                <div class="filter-btn-group">
+                    <button type="submit" class="btn btn-primary w-100">应用筛选</button>
+                    <button type="reset" class="btn btn-secondary w-100 mt-2">重置</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 车辆展示区域 -->
+    <div class="col-md-9">
+        <div id="carList" class="row row-cols-1 row-cols-md-3 g-4">
+            {% for car in cars %}
+            <div class="col">
+                <div class="card h-100">
+                    <img src="/static/images/({{ car.image_index }}).jpg" class="car-image card-img-top" alt="{{ car.info.品牌 }} {{ car.info.车型 }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.info.品牌 }} {{ car.info.车型 }}</h5>
+                        <p class="card-text">
+                            价格：{{ car.info['价格(万元)'] }}万元<br>
+                            能源类型：{{ car.info.能源类型 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="/details/{{ car.info.品牌 }}/{{ car.info.车型 }}" class="btn btn-primary">查看详情</a>
+                            <button class="btn favorite-btn" 
+                                    data-brand="{{ car.info.品牌 }}" 
+                                    data-model="{{ car.info.车型 }}">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Thanks Section -->
+<div class="row">
+    <div class="col-12">
+        <section class="about mt-5" id="about">
+            <div class="heading text-center">
+                <h1>致谢</h1>
+            </div>
+            <div class="about-container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="about-img">
+                            <img src="{{ url_for('static', filename='welcomethanks/img/about.png') }}" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="about-text">
+                            <h3>大一的第一个小demo~展示性更多，请多批评指正~</h3>
+                            <a href="#" class="btn btn-primary">Happy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- ScrollReveal -->
+<script src="https://unpkg.com/scrollreveal@4.0.9/dist/scrollreveal.min.js"></script>
+<script>
+// ScrollReveal Animation
+document.addEventListener('DOMContentLoaded', function() {
+    const sr = ScrollReveal({
+        distance: '120px',
+        duration: 2800,
+        delay: 300,
+        reset: false
+    });
+
+    // 添加动效
+    sr.reveal('.animated-text', {delay: 200, origin: 'top', distance: '120px'});
+    sr.reveal('.heading', {delay: 800, origin: 'top'});
+    sr.reveal('.about-container', {delay: 600, origin: 'top'});
+    
+    // 添加文字依次出现的效果
+    const title = document.querySelector('.welcome-heading');
+    const subtitle = document.querySelector('.welcome-subtitle');
+    
+    if (title && subtitle) {
+        title.style.opacity = "0";
+        subtitle.style.opacity = "0";
+        
+        setTimeout(() => {
+            title.style.transition = "opacity 1.2s ease, transform 1.5s ease";
+            title.style.opacity = "1";
+            title.style.transform = "translateY(0)";
+            
+            setTimeout(() => {
+                subtitle.style.transition = "opacity 1.2s ease, transform 1.5s ease";
+                subtitle.style.opacity = "1";
+                subtitle.style.transform = "translateY(0)";
+            }, 600);
+        }, 400);
+    }
+});
+
+// Original JavaScript code
+$(document).ready(function() {
+    // 初始化所有收藏按钮的状态
+    function initializeFavoriteButtons() {
+        $('.favorite-btn').each(function() {
+            const btn = $(this);
+            const brand = btn.data('brand');
+            const model = btn.data('model');
+            
+            $.get(`/api/favorites/check/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`)
+                .done(function(response) {
+                    if (response.is_favorite) {
+                        btn.addClass('btn-danger').removeClass('btn-outline-danger');
+                    } else {
+                        btn.addClass('btn-outline-danger').removeClass('btn-danger');
+                    }
+                });
+        });
+    }
+
+    // 收藏按钮点击事件
+    $('.favorite-btn').click(function() {
+        const btn = $(this);
+        const brand = btn.data('brand');
+        const model = btn.data('model');
+        const isFavorite = btn.hasClass('btn-danger');
+        
+        $.ajax({
+            url: `/api/favorites/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`,
+            method: isFavorite ? 'DELETE' : 'POST',
+            success: function(response) {
+                if (response.success) {
+                    if (isFavorite) {
+                        btn.removeClass('btn-danger').addClass('btn-outline-danger');
+                    } else {
+                        btn.removeClass('btn-outline-danger').addClass('btn-danger');
+                    }
+                }
+                // 可以添加一个小提示
+                const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">')
+                    .append($('<div class="toast-body">').text(response.message));
+                $('body').append(toast);
+                toast.toast({ delay: 2000 }).toast('show');
+            },
+            error: function() {
+                alert('操作失败，请稍后重试');
+            }
+        });
+    });
+
+    // 页面加载时初始化收藏按钮状态
+    initializeFavoriteButtons();
+
+    // 更新滑动条的值显示
+    $('input[name="min_price"]').on('input', function() {
+        $('#minPriceValue').text($(this).val() + '万');
+    });
+
+    $('input[name="budget"]').on('input', function() {
+        $('#maxPriceValue').text($(this).val() + '万');
+    });
+
+    $('input[name="min_range"]').on('input', function() {
+        $('#minRangeValue').text($(this).val() + 'km');
+    });
+
+    // 确保最小价格不超过最大价格
+    $('input[name="min_price"]').on('change', function() {
+        const minPrice = parseFloat($(this).val());
+        const maxPrice = parseFloat($('input[name="budget"]').val());
+        if (minPrice > maxPrice) {
+            $('input[name="budget"]').val(minPrice);
+            $('#maxPriceValue').text(minPrice + '万');
+        }
+    });
+
+    // 确保最大价格不低于最小价格
+    $('input[name="budget"]').on('change', function() {
+        const maxPrice = parseFloat($(this).val());
+        const minPrice = parseFloat($('input[name="min_price"]').val());
+        if (maxPrice < minPrice) {
+            $('input[name="min_price"]').val(maxPrice);
+            $('#minPriceValue').text(maxPrice + '万');
+        }
+    });
+
+    // 从URL参数中恢复筛选条件
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('min_price')) {
+        const minPrice = urlParams.get('min_price');
+        $('input[name="min_price"]').val(minPrice);
+        $('#minPriceValue').text(minPrice + '万');
+    }
+    if (urlParams.has('budget')) {
+        const budget = urlParams.get('budget');
+        $('input[name="budget"]').val(budget);
+        $('#maxPriceValue').text(budget + '万');
+    }
+    if (urlParams.has('min_range')) {
+        const minRange = urlParams.get('min_range');
+        $('input[name="min_range"]').val(minRange);
+        $('#minRangeValue').text(minRange + 'km');
+    }
+
+    $('#filterForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {};
+        $(this).serializeArray().forEach(function(item) {
+            if (item.value) {
+                formData[item.name] = item.value;
+            }
+        });
+
+        $.ajax({
+            url: '/filter',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    updateCarList(response.cars);
+                    // 更新URL，但不刷新页面
+                    const newUrl = new URL(window.location.href);
+                    Object.keys(formData).forEach(key => {
+                        if (formData[key]) {
+                            newUrl.searchParams.set(key, formData[key]);
+                        } else {
+                            newUrl.searchParams.delete(key);
+                        }
+                    });
+                    window.history.pushState({}, '', newUrl);
+                } else {
+                    alert('筛选出错：' + response.error);
+                }
+            },
+            error: function() {
+                alert('服务器错误，请稍后重试');
+            }
+        });
+    });
+
+    function updateCarList(cars) {
+        const carList = $('#carList');
+        carList.empty();
+        
+        cars.forEach(function(car) {
+            const card = `
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="/static/images/(${car.image_index}).jpg" class="car-image card-img-top" alt="${car.info.品牌} ${car.info.车型}">
+                        <div class="card-body">
+                            <h5 class="card-title">${car.info.品牌} ${car.info.车型}</h5>
+                            <p class="card-text">
+                                价格：${car.info['价格(万元)']}万元<br>
+                                能源类型：${car.info.能源类型}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="/details/${car.info.品牌}/${car.info.车型}" class="btn btn-primary">查看详情</a>
+                                <button class="btn favorite-btn" 
+                                        data-brand="${car.info.品牌}" 
+                                        data-model="${car.info.车型}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            carList.append(card);
+        });
+    }
+
+    // 重置按钮事件
+    $('#filterForm button[type="reset"]').click(function() {
+        // 清除URL参数
+        window.history.pushState({}, '', window.location.pathname);
+        setTimeout(function() {
+            $('#filterForm').submit();
+        }, 0);
+    });
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet">
+<style>
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+/* About Section Styles */
+.about {
+    padding: 4rem 2rem;
+    background: #fff;
+}
+
+.about .heading {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.about .heading span {
+    color: #007bff;
+    font-size: 1.5rem;
+}
+
+.about .heading h1 {
+    font-size: 2.5rem;
+    margin-top: 1rem;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-text {
+    padding: 2rem;
+}
+
+.about-text span {
+    color: #007bff;
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+</style>
+{% endblock %} 

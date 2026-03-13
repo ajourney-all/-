@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    
+    .profile-header {
+        background: linear-gradient(145deg, #fff, #f8f0e8);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(255, 127, 80, 0.1);
+        border: 1px solid rgba(255, 172, 56, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, rgba(255, 127, 80, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+        border-radius: 50%;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: var(--primary-orange);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(255, 127, 80, 0.3);
+    }
+    
+    .profile-name {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    
+    .profile-email {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+    
+    .profile-stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+        flex: 1;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--primary-orange);
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .profile-section {
+        background: #fff;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #333;
+        display: flex;
+        align-items: center;
+    }
+    
+    .section-title i {
+        margin-right: 0.5rem;
+        color: var(--primary-orange);
+    }
+    
+    .activity-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-date {
+        color: #999;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .activity-content {
+        color: #333;
+    }
+    
+    .no-activity {
+        color: #999;
+        font-style: italic;
+        text-align: center;
+        padding: 1rem;
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ current_user.username[0].upper() }}
+        </div>
+        <h1 class="profile-name">{{ current_user.username }}</h1>
+        <p class="profile-email">{{ current_user.email }}</p>
+        <p>注册时间：{{ current_user.created_at.strftime('%Y-%m-%d') }}</p>
+        
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ favorites_count }}</div>
+                <div class="stat-label">收藏车辆</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ history_count }}</div>
+                <div class="stat-label">筛选历史</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="profile-section">
+        <h2 class="section-title">
+            <i class="fas fa-heart"></i> 最近收藏
+        </h2>
+        {% if recent_favorites %}
+            {% for favorite in recent_favorites %}
+            <div class="activity-item">
+                <div class="activity-date">{{ favorite.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                <div class="activity-content">
+                    收藏了 <strong>{{ favorite.car_brand }} {{ favorite.car_model }}</strong>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-activity">暂无收藏记录</div>
+        {% endif %}
+    </div>
+    
+    <div class="profile-section">
+        <h2 class="section-title">
+            <i class="fas fa-history"></i> 最近筛选
+        </h2>
+        {% if recent_history %}
+            {% for item in recent_history %}
+            <div class="activity-item">
+                <div class="activity-date">{{ item.date }}</div>
+                <div class="activity-content">
+                    筛选条件: 
+                    {% if item.preferences.brand %}<strong>品牌:</strong> {{ item.preferences.brand }}{% endif %}
+                    {% if item.preferences.body_type %}<strong>车身:</strong> {{ item.preferences.body_type }}{% endif %}
+                    {% if item.preferences.budget %}<strong>预算:</strong> {{ item.preferences.budget }}万{% endif %}
+                    (结果: {{ item.results_count }}辆车)
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-activity">暂无筛选记录</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

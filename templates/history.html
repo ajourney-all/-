@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3>筛选历史记录</h3>
+        <button id="clearHistory" class="btn btn-danger">清空历史</button>
+    </div>
+    <div class="card-body">
+        <div id="historyContent">
+            {% if history %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>筛选条件</th>
+                            <th>结果数量</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        {% for entry in history %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    {% if entry.preferences.budget %}
+                                    <li>价格上限：{{ entry.preferences.budget }}万元</li>
+                                    {% endif %}
+                                    {% if entry.preferences.brand %}
+                                    <li>品牌：{{ entry.preferences.brand }}</li>
+                                    {% endif %}
+                                    {% if entry.preferences.body_type %}
+                                    <li>车身结构：{{ entry.preferences.body_type }}</li>
+                                    {% endif %}
+                                    {% if entry.preferences.drive_type %}
+                                    <li>驱动方式：{{ entry.preferences.drive_type }}</li>
+                                    {% endif %}
+                                    {% if entry.preferences.min_range %}
+                                    <li>最小续航里程：{{ entry.preferences.min_range }}km</li>
+                                    {% endif %}
+                                </ul>
+                            </td>
+                            <td>{{ entry.results_count }}辆</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary apply-filter" 
+                                        data-filter='{{ entry.preferences|tojson|safe }}'>
+                                    应用此筛选
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center">暂无筛选历史记录</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    function updateHistory() {
+        $.get('/get_history', function(response) {
+            if (response.success) {
+                const history = response.history;
+                const tbody = $('#historyTableBody');
+                tbody.empty();
+                
+                if (history.length === 0) {
+                    $('#historyContent').html('<p class="text-center">暂无筛选历史记录</p>');
+                    return;
+                }
+
+                history.forEach((entry, index) => {
+                    const conditions = [];
+                    if (entry.preferences.budget) {
+                        conditions.push(`<li>价格上限：${entry.preferences.budget}万元</li>`);
+                    }
+                    if (entry.preferences.brand) {
+                        conditions.push(`<li>品牌：${entry.preferences.brand}</li>`);
+                    }
+                    if (entry.preferences.body_type) {
+                        conditions.push(`<li>车身结构：${entry.preferences.body_type}</li>`);
+                    }
+                    if (entry.preferences.drive_type) {
+                        conditions.push(`<li>驱动方式：${entry.preferences.drive_type}</li>`);
+                    }
+                    if (entry.preferences.min_range) {
+                        conditions.push(`<li>最小续航里程：${entry.preferences.min_range}km</li>`);
+                    }
+
+                    const row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    ${conditions.join('')}
+                                </ul>
+                            </td>
+                            <td>${entry.results_count}辆</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary apply-filter" 
+                                        data-filter='${JSON.stringify(entry.preferences)}'>
+                                    应用此筛选
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            }
+        });
+    }
+
+    // 每5秒更新一次历史记录
+    setInterval(updateHistory, 5000);
+
+    // 清空历史记录
+    $('#clearHistory').click(function() {
+        if (confirm('确定要清空所有筛选历史记录吗？')) {
+            $.post('/clear_history', function(response) {
+                if (response.success) {
+                    updateHistory();
+                }
+            });
+        }
+    });
+
+    // 应用历史筛选条件
+    $(document).on('click', '.apply-filter', function() {
+        const filter = JSON.parse($(this).data('filter'));
+        window.location.href = `/?${$.param(filter)}`;
+    });
+});
+</script>
+{% endblock %} 
