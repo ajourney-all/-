@@ -102,6 +102,16 @@ flaskcarsystem/
 5. **访问应用**
    打开浏览器访问 http://127.0.0.1:5000/
 
+## 📸 项目截图
+
+| 首页浏览 | 筛选推荐 |
+|:-------:|:-------:|
+| ![首页](screenshots/home.png) | ![推荐](screenshots/Recommend.png) |
+
+| 登录页面 | 筛选历史 |
+|:-------:|:-------:|
+| ![登录](screenshots/signin.png) | ![历史](screenshots/history.png) |
+
 ### 使用指南
 
 1. **注册/登录**
